@@ -119,6 +119,10 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+<<<<<<< HEAD
+=======
+.env
+>>>>>>> 75677fd (Initial commit)
 .venv
 env/
 venv/
