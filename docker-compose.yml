@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-=======
 version: '3.8'
 
->>>>>>> example_implementation
+
 x-airflow-common: &airflow-common
   build: './dockerfiles/airflow'
   image: ${AIRFLOW_IMAGE_NAME:-extending_airflow:latest}
@@ -12,17 +10,10 @@ x-airflow-common: &airflow-common
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${PG_USER:-airflow}:${PG_PASSWORD:-airflow}@postgres/${PG_DATABASE:-airflow}
-<<<<<<< HEAD
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${PG_USER:-airflow}:${PG_PASSWORD:-airflow}@postgres/${PG_DATABASE:-airflow}
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'true'  # Change to 'false' to remove the tutorials and examples
-=======
-    AIRFLOW__CORE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
-    AIRFLOW__CORE__FERNET_KEY: ''
-    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
->>>>>>> example_implementation
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.session'
     AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'True'
@@ -42,13 +33,9 @@ x-airflow-common: &airflow-common
     - frontend
     - backend
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-0}"
-<<<<<<< HEAD
   depends_on:  &airflow-common-depends-on
     postgres:
       condition: service_healthy
-=======
-
->>>>>>> example_implementation
 
 services:
   postgres:
@@ -65,7 +52,6 @@ services:
     networks:
       - backend
     environment:
-<<<<<<< HEAD
       - POSTGRES_USER=${PG_USER:-airflow}
       - POSTGRES_PASSWORD=${PG_PASSWORD:-airflow}
       - POSTGRES_DATABASE=${PG_DATABASE:-airflow}
@@ -74,16 +60,6 @@ services:
       - db_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-p", "5432", "-U", "${PG_USER:-airflow}"]
-=======
-      POSTGRES_USER: ${PG_USER:-airflow}
-      POSTGRES_PASSWORD: ${PG_PASSWORD:-airflow}
-      POSTGRES_DB: ${PG_DATABASE:-airflow}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PG_USER:-airflow}"]
->>>>>>> example_implementation
       interval: 60s
       timeout: 20s
       retries: 3
@@ -103,13 +79,8 @@ services:
       - frontend
       - backend
     environment:
-<<<<<<< HEAD
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minio}
       - MINIO_SECRET_KEY=${MINIO_SECRET_ACCESS_KEY:-minio123}
-=======
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minio}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minio123}
->>>>>>> example_implementation
     volumes:
       - minio_data:/data
     command: server /data --console-address :9001
@@ -134,17 +105,10 @@ services:
       /bin/sh -c '
       sleep 5;
       /usr/bin/mc config host add s3 http://s3:9000 ${MINIO_ACCESS_KEY:-minio} ${MINIO_SECRET_ACCESS_KEY:-minio123} --api S3v4;
-<<<<<<< HEAD
       [[ ! -z "`/usr/bin/mc ls s3 | grep challenge`" ]] || /usr/bin/mc mb s3/${MLFLOW_BUCKET_NAME:-mlflow};
       /usr/bin/mc policy download s3/${MLFLOW_BUCKET_NAME:-mlflow};
       [[ ! -z "`/usr/bin/mc ls s3 | grep challenge`" ]] || /usr/bin/mc mb s3/${DATA_REPO_BUCKET_NAME:-data};
       /usr/bin/mc policy download s3/${DATA_REPO_BUCKET_NAME:-data};
-=======
-      /usr/bin/mc mb s3/${MLFLOW_BUCKET_NAME:-mlflow};
-      /usr/bin/mc policy set download s3/${MLFLOW_BUCKET_NAME:-mlflow};
-      /usr/bin/mc mb s3/${DATA_REPO_BUCKET_NAME:-data};
-      /usr/bin/mc policy set download s3/${DATA_REPO_BUCKET_NAME:-data};
->>>>>>> example_implementation
       exit 0;
       '
 
@@ -157,27 +121,17 @@ services:
       - mlflow
       - all
     depends_on:
-<<<<<<< HEAD
       postgres:
         condition: service_healthy
-=======
-      - postgres
->>>>>>> example_implementation
     ports:
       - "${MLFLOW_PORT:-5000}:5000"
     networks:
       - frontend
       - backend
     environment:
-<<<<<<< HEAD
       - AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY:-minio}
       - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_ACCESS_KEY:-minio123}
       - MLFLOW_S3_ENDPOINT_URL=http://s3:9000
-=======
-      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY:-minio}
-      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_ACCESS_KEY:-minio123}
-      MLFLOW_S3_ENDPOINT_URL: http://s3:9000
->>>>>>> example_implementation
     command: >
       mlflow server 
       --backend-store-uri postgresql://${PG_USER:-airflow}:${PG_PASSWORD:-airflow}@postgres:5432/${MLFLOW_DB:-mlflow_db}
@@ -191,34 +145,22 @@ services:
 
   fastapi:
     restart: always
-<<<<<<< HEAD
     build: "./dockerfiles/fastapi"
-=======
-    build:
-      context: ./dockerfiles/fastapi
-      dockerfile: Dockerfile  # Asegúrate de que la ruta al Dockerfile sea correcta
->>>>>>> example_implementation
     image: backend_fastapi
     container_name: fastapi
     profiles:
       - all
     depends_on:
-<<<<<<< HEAD
       mlflow:
         condition: service_healthy
       airflow-webserver:
         condition: service_healthy
-=======
-      - mlflow
-      - airflow-webserver
->>>>>>> example_implementation
     ports:
       - "${FASTAPI_PORT:-8800}:8800"
     networks:
       - frontend
       - backend
     environment:
-<<<<<<< HEAD
       - AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY:-minio}
       - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_ACCESS_KEY:-minio123}
       - MLFLOW_S3_ENDPOINT_URL=http://s3:9000
@@ -227,15 +169,6 @@ services:
       uvicorn app:app 
       --host 0.0.0.0
       --port 8800
-=======
-      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY:-minio}
-      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_ACCESS_KEY:-minio123}
-      MLFLOW_S3_ENDPOINT_URL: http://s3:9000
-      AWS_ENDPOINT_URL_S3: http://s3:9000
-    volumes:
-      - ./dockerfiles/fastapi:/app
-    command: /bin/bash -c "python -c 'import app' || echo 'Failed to import app' && uvicorn app:app --host 0.0.0.0 --port 8800 --reload"
->>>>>>> example_implementation
     healthcheck:
       test: curl --include --request GET http://fastapi:8800/ || exit 1
       interval: 60s
@@ -243,13 +176,6 @@ services:
       start_period: 120s
       retries: 3
 
-<<<<<<< HEAD
-=======
-
-
-
-
->>>>>>> example_implementation
   airflow-webserver:
     <<: *airflow-common
     container_name: airflow_webserver
@@ -386,8 +312,4 @@ networks:
 
 volumes:
   db_data:
-<<<<<<< HEAD
   minio_data:
-=======
-  minio_data:
->>>>>>> example_implementation
