@@ -150,6 +150,7 @@ services:
     container_name: fastapi
     profiles:
       - all
+      - airflow
     depends_on:
       mlflow:
         condition: service_healthy
