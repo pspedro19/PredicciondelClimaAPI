@@ -1,0 +1,48 @@
+{
+  "columns": [
+    "Sunshine",
+    "Humidity9am",
+    "Humidity3pm",
+    "Cloud9am",
+    "Cloud3pm"
+  ],
+  "columns_after_dummy": [
+    "Sunshine",
+    "Humidity9am",
+    "Humidity3pm",
+    "Cloud9am",
+    "Cloud3pm"
+  ],
+  "target_col": "WillItRain",
+  "categorical_columns": [],
+  "columns_dtypes": {
+    "Sunshine": "float64",
+    "Humidity9am": "float64",
+    "Humidity3pm": "float64",
+    "Cloud9am": "float64",
+    "Cloud3pm": "float64"
+  },
+  "columns_dtypes_after_dummy": {
+    "Sunshine": "float64",
+    "Humidity9am": "float64",
+    "Humidity3pm": "float64",
+    "Cloud9am": "float64",
+    "Cloud3pm": "float64"
+  },
+  "categories_values_per_categorical": {},
+  "date": "2024/04/29-00:00:26\"",
+  "standard_scaler_mean": [
+    6.5,  
+    70.0,
+    65.0,
+    2.5,  
+    3.0  
+  ],
+  "standard_scaler_std": [
+    4.5, 
+    10.0,
+    15.0, 
+    1.5,  
+    2.0   
+  ]
+}
